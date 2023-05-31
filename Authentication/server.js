@@ -1,6 +1,7 @@
 const express = require('express');
 const studentRouters = require("./src/routes/studentRoutes");
 const sequelize = require("./src/database/studentdb");
+const Images = require('./src/model/imageModel');
 
 const app = express();
 const port = 3000;

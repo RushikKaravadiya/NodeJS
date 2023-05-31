@@ -16,7 +16,8 @@ const SignUp = async (req, res) => {
 
     //required fild validaion
     if (!first_name || !last_name || !email_address || !password) {
-        res.status(401).send("firstname,lastname,email and password is required");
+       return res.status(401).send("firstname,lastname,email and password is required");
+        
     }
 
     // check email is Available
@@ -43,10 +44,6 @@ const Login = async (req, res) => {
     }
 
     // Check if the password exists
-    if (!studentsExist || !studentsExist.password) {
-        res.status(401).send("Password does not match or password is empty");
-        return;
-    }
     const isValidPassword = await bcrypt.compare(password, studentsExist.password);
     if (!isValidPassword) {
         res.status(401).send("Password does not match or password is empty");
@@ -55,20 +52,6 @@ const Login = async (req, res) => {
         // Generate Authentication token
         const token = jwt.sign({ email_address }, 'your_secret_key');
         res.send({ token });
-    }
-};
-
-//Api for  students profile 
-const StudentProfile = async (req, res) => {
-    const email_address = req.student.email_address;
-    // Get profilebyEmail
-    const studentProfile = await studentServices.getStudentProfileByEmail(email_address);
-
-    if (!studentProfile) {
-        res.status(401).send("Student profile not found");
-    }
-    else {
-        res.json({ profile: studentProfile });
     }
 };
 
@@ -84,10 +67,24 @@ function authenticateToken(req, res, next) {
             return res.status(403).send("Invalid Token");
         } else {
             req.student = student;
-            next();
+            next(); //Allow to request to continue to the next middleware in line
         }
     });
-}
+};
+
+//Api for  students profile 
+const StudentProfile = async (req, res) => {
+    const email_address = req.student.email_address;
+    // Get profilebyEmail
+    const studentProfile = await studentServices.getStudentProfileByEmail(email_address);
+
+    if (!studentProfile) {
+        res.status(401).send("Student profile not found");
+    }
+    else {
+        res.json({ profile: studentProfile });
+    }
+};
 
 module.exports = {
     getStudents,
