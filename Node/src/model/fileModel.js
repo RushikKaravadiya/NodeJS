@@ -9,4 +9,27 @@ const Images = sequelize.define('images', {
     }
 });
 
-module.exports = Images;
+
+const User = sequelize.define('User', {
+    firstName: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    lastName: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+});
+
+
+User.hasMany(Images, { as: 'images' });
+
+
+module.exports = {
+    Images,
+    User,
+};

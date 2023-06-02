@@ -1,5 +1,6 @@
 const express = require('express');
 const Images = require('./src/model/fileModel');
+//const User = require('./src/model/fileModel');
 const student = require('./src/model/studentModel');
 
 const imageRouters = require('./src/routes/fileRoutes');
