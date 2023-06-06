@@ -88,7 +88,7 @@ const multipleFileUpload = async (req, res) => {
               await fileServices.createFile(filename, user.id);
             }
           }
-          res.status(200).json({seccess:"Multiple files uploaded and user created in the database"});
+          res.status(200).json({success:"Multiple files uploaded and user created in the database"});
         } else {
           for (const filename of filenames) {
             // Check if file is uploaded
