@@ -1,0 +1,47 @@
+service: node
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+functions:
+  # fileUpload:
+  #   handler: fileUpload.handler
+  #   events:
+  #     - httpApi: '*'
+  # Email:
+  #   handler: sendEmail.Email
+  #   events:
+  #     - httpApi: '*'
+  student:
+    handler: server.student
+    events:
+      - httpApi: '*'
+
+plugins:
+  - serverless-offline
+
+
+# service: node
+# frameworkVersion: "3"
+
+# provider:
+#   name: aws
+#   runtime: nodejs14.x
+
+# functions:
+#   fileUpload:
+#     handler: fileUpload.handler
+#     events:
+#       - httpApi:
+#           path: /file-upload  # Specify a unique path for the fileUpload function
+
+#   sendEmail:
+#     handler: sendEmail.Email
+#     events:
+#       - httpApi:
+#           path: /send-email  # Specify a unique path for the sendEmail function
+
+# plugins:
+#   - serverless-offline
