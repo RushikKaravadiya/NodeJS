@@ -10,14 +10,14 @@ functions:
   #   handler: fileUpload.handler
   #   events:
   #     - httpApi: '*'
-  # Email:
-  #   handler: sendEmail.Email
-  #   events:
-  #     - httpApi: '*'
-  student:
-    handler: server.student
+  Email:
+    handler: sendEmail.Email
     events:
       - httpApi: '*'
+  # student:
+  #   handler: server.student
+  #   events:
+  #     - httpApi: '*'
 
 plugins:
   - serverless-offline

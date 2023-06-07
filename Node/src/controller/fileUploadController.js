@@ -19,14 +19,14 @@ const singleFileUpload = async (req, res) => {
     const { firstname, lastname, email } = req.body;
     if (err) {
       if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-        res.status(401).json({ error: "Only one file can be selected" });
+        res.status(400).json({ error: "Only one file can be selected" });
       } else {
         throw err;
       }
     }
     else {
       if (!req.file || !firstname || !lastname || !email) {
-        res.status(401).json({ error: "All fields are required" });
+        res.status(400).json({ error: "All fields are required" });
         return;
       }
 
@@ -37,7 +37,7 @@ const singleFileUpload = async (req, res) => {
       if (!existingUser) {
         user = await fileServices.createUser(firstname, lastname, email);
         await fileServices.createFile(filename, user.id);
-        res.status(200).json({ success: "Single file uploaded and data created successfully!" });
+        res.status(201).json({ success: "Single file uploaded and data created successfully!" });
         return;
       }
       else {
@@ -46,7 +46,7 @@ const singleFileUpload = async (req, res) => {
           res.send("This file is already uploaded!");
         } else {
           await fileServices.createFile(filename, existingUser.id);
-          res.status(200).json({ success: "Single file uploaded and data created successfully!" });
+          res.status(201).json({ success: "Single file uploaded and data created successfully!" });
         }
       }
     }
@@ -73,7 +73,7 @@ const multipleFileUpload = async (req, res) => {
       throw err;
     } else {
       if (!req.files || req.files.length === 0 || !firstname || !lastname || !email) {
-        res.status(401).json({ error: "All fields are required!!!" });
+        res.status(400).json({ error: "All fields are required!!!" });
       } else {
         const filenames = req.files.map((file) => file.filename);
         const existingUser = await fileServices.findUserByEmail(email);
@@ -88,7 +88,7 @@ const multipleFileUpload = async (req, res) => {
               await fileServices.createFile(filename, user.id);
             }
           }
-          res.status(200).json({success:"Multiple files uploaded and user created in the database"});
+          res.status(201).json({success:"Multiple files uploaded and user created in the database"});
         } else {
           for (const filename of filenames) {
             // Check if file is uploaded
@@ -98,7 +98,7 @@ const multipleFileUpload = async (req, res) => {
               await fileServices.createFile(filename, existingUser.id);
             }
           }
-          res.status(200).json({success:"Multiple files uploaded and data created successfully!"});
+          res.status(201).json({success:"Multiple files uploaded and data created successfully!"});
         }
       }
     }

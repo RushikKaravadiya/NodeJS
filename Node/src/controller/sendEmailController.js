@@ -15,13 +15,13 @@ const sendEmail = (req, res) => {
     const { sendTo, subject, messages } = req.body;
 
     if (!sendTo) {
-        res.send("Please enter the sender's email address");
+        res.status(404).json({error:"Please enter the sender's email address"});
     } 
     else if (!subject) {
-        res.send("Please enter the subject");
+        res.status(400).json({error:"Please enter the subject"});
     } 
     else if (!messages) {
-        res.send("Please enter the message");
+        res.status(400).json({error:"Please enter the message"});
     } 
     else {
         const mailOptions = {
@@ -32,9 +32,9 @@ const sendEmail = (req, res) => {
         };
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                res.send("Error in sending mail!!!");
+                res.status(404).json({error:"Error in sending mail!!!"});
             } else {
-                res.send(`Email sent successfully to ${sendTo}`);
+                res.status(200).json({success:`Email sent successfully to ${sendTo}`});
             }
         });
     }
