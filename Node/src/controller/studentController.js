@@ -60,7 +60,6 @@ const Login = async (req, res) => {
   }
 }
 
-
 // Verify token and check revocation
 function authenticateToken(req, res, next) {
   const token = req.headers.authorization;
