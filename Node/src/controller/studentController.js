@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const studentServices = require("../services/studentServices");
 const revokedTokens = new Set();
+const activeTokens = new Set();
+
 
 //Api for get all students
 const getStudents = async (req, res) => {
@@ -35,31 +37,29 @@ const SignUp = async (req, res) => {
     res.status(201).json({ success: "Student added successfully" });
   }
 };
-
-// API for Student login
 const Login = async (req, res) => {
   const { email_address, password } = req.body;
 
-  // Check if the email is available
   const studentExists = await studentServices.getStudentByEmail(email_address);
   if (!studentExists) {
     res.status(404).json({ error: "Invalid Email address or email is empty" });
     return;
   }
 
-  // Check if the password is valid
-  const isValidPassword = await bcrypt.compare(
-    password,
-    studentExists.password
-  );
+  const isValidPassword = await bcrypt.compare(password, studentExists.password);
   if (!isValidPassword) {
     res.status(404).json({ error: "Password does not match or password is empty" });
   } else {
-    // Generate Authentication token
+    // Remove the old token from activeTokens set
+    activeTokens.delete(req.headers.authorization);
+
     const token = jwt.sign({ email_address }, "your_secret_key");
+    // Add the new token to activeTokens set
+    activeTokens.add(token);
     res.send({ token });
   }
-};
+}
+
 
 // Verify token and check revocation
 function authenticateToken(req, res, next) {
@@ -69,7 +69,7 @@ function authenticateToken(req, res, next) {
     return res.status(401).json({ error: "No token provided" });
   }
 
-  if (revokedTokens.has(token)) {
+  if (revokedTokens.has(token) || !activeTokens.has(token)) {
     return res.status(401).json({ error: "Token has expired or is invalid" });
   }
 
@@ -77,13 +77,13 @@ function authenticateToken(req, res, next) {
     if (err) {
       return res.status(400).json({ error: "Invalid token" });
     }
-
+    
     req.student = student;
-    // Add the token to the revokedTokens set
     revokedTokens.add(token);
     next();
   });
 }
+
 // API for student profile
 const StudentProfile = async (req, res) => {
   const email_address = req.student.email_address;
@@ -99,7 +99,6 @@ const StudentProfile = async (req, res) => {
     res.json({ profile: studentProfile });
   }
 };
-
 module.exports = {
   getStudents,
   SignUp,

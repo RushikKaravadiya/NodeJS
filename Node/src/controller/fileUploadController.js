@@ -43,7 +43,7 @@ const singleFileUpload = async (req, res) => {
       else {
         const findRecord = await fileServices.findFileByNameAndUserId(filename, existingUser.id);
         if (findRecord) {
-          res.send("This file is already uploaded!");
+          res.status(409).json({error:"This file is already uploaded!"});
         } else {
           await fileServices.createFile(filename, existingUser.id);
           res.status(201).json({ success: "Single file uploaded and data created successfully!" });
